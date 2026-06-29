@@ -74,14 +74,6 @@ class WorkoutProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void renameRoutine(String id, String newName) {
-    final index = _routines.indexWhere((r) => r.id == id);
-    if (index == -1) return;
-    _routines[index] = _routines[index].copyWith(name: newName);
-    _save();
-    notifyListeners();
-  }
-
   void duplicateRoutine(String id) {
     final original = _routines.firstWhere((r) => r.id == id);
     _routines.add(original.copyWith(

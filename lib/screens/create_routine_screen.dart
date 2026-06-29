@@ -39,11 +39,10 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
   void _saveRoutine() {
     final name = _routineNameController.text.trim();
     if (name.isEmpty) {
-      final c = AppColors.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Please enter a routine name'),
-          backgroundColor: c.surface,
+          backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -87,22 +86,7 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
           'New Routine',
           style: TextStyle(fontWeight: FontWeight.w800, color: c.textPrimary),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: TextButton(
-              onPressed: _saveRoutine,
-              child: const Text(
-                'Save',
-                style: TextStyle(
-                  color: AppColors.accent,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-        ],
+        actions: [],
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),

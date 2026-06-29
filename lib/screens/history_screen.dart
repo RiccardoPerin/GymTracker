@@ -125,6 +125,25 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               exercise: exercise,
                             ),
                           )),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          // ------- TO DO --------
+                        }, 
+                        icon: const Icon(Icons.delete_rounded, size: 18, color: Colors.white,),
+                        label: const Text(
+                          'Delete Workout',
+                          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          elevation: 0,
+                        ),
+                      ),
                     ],
                   ),
                 ),

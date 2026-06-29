@@ -179,7 +179,6 @@ class HomePage extends StatelessWidget {
                         },
                         onDuplicate: () =>
                             context.read<WorkoutProvider>().duplicateRoutine(routine.id),
-                        onRename: () => _showRenameDialog(context, routine),
                         onDelete: () => _confirmDelete(context, routine),
                         onEdit: () => Navigator.push(
                           context,
@@ -196,97 +195,6 @@ class HomePage extends StatelessWidget {
             ),
         ],
       ),
-    );
-  }
-
-  void _showRenameDialog(BuildContext context, Routine routine) {
-    final controller = TextEditingController(text: routine.name);
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        final c = AppColors.of(ctx);
-        return Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
-            decoration: BoxDecoration(
-              color: c.surface,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: c.dragHandle,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Rename Routine',
-                  style: TextStyle(
-                    color: c.textPrimary,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: controller,
-                  autofocus: true,
-                  style: TextStyle(color: c.textPrimary),
-                  decoration: InputDecoration(
-                    hintText: 'Routine Name',
-                    hintStyle: TextStyle(color: c.iconDim),
-                    filled: true,
-                    fillColor: c.inputBg,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accent,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    onPressed: () {
-                      final name = controller.text.trim();
-                      if (name.isEmpty) return;
-                      context.read<WorkoutProvider>().renameRoutine(routine.id, name);
-                      Navigator.pop(ctx);
-                    },
-                    child: const Text(
-                      'Save',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 
@@ -396,7 +304,6 @@ class _RoutineCard extends StatelessWidget {
   final Routine routine;
   final VoidCallback onStart;
   final VoidCallback onDuplicate;
-  final VoidCallback onRename;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
 
@@ -404,7 +311,6 @@ class _RoutineCard extends StatelessWidget {
     required this.routine,
     required this.onStart,
     required this.onDuplicate,
-    required this.onRename,
     required this.onDelete,
     required this.onEdit,
   });
@@ -475,7 +381,6 @@ class _RoutineCard extends StatelessWidget {
                   ),
                   onSelected: (value) {
                     if (value == 'duplicate') onDuplicate();
-                    if (value == 'rename') onRename();
                     if (value == 'delete') onDelete();
                     if (value == 'edit') onEdit();
                   },
@@ -489,17 +394,6 @@ class _RoutineCard extends StatelessWidget {
                             Icon(Icons.copy_rounded, size: 18, color: pc.iconMid),
                             const SizedBox(width: 10),
                             Text('Duplicate', style: TextStyle(color: pc.textPrimary)),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'rename',
-                        child: Row(
-                          children: [
-                            Icon(Icons.drive_file_rename_outline_outlined,
-                                size: 18, color: pc.iconMid),
-                            const SizedBox(width: 10),
-                            Text('Rename', style: TextStyle(color: pc.textPrimary)),
                           ],
                         ),
                       ),
