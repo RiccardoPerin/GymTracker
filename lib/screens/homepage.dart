@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/models.dart';
+import '../models/isar_models.dart';
 import '../providers/workout_provider.dart';
 import '../models/app_colors.dart';
 import 'create_routine_screen.dart';
@@ -168,6 +168,16 @@ class HomePage extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 12),
                       child: _RoutineCard(
                         routine: routine,
+                        onTap: () => _showRoutineDetail(context, routine, () {
+                          context.read<WorkoutProvider>().startRoutine(routine);
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ActiveWorkoutScreen(),
+                            ),
+                          );
+                        }),
                         onStart: () {
                           context.read<WorkoutProvider>().startRoutine(routine);
                           Navigator.push(
@@ -194,6 +204,180 @@ class HomePage extends StatelessWidget {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  void _showRoutineDetail(
+      BuildContext context, Routine routine, VoidCallback onStart) {
+    final c = AppColors.of(context);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.3,
+        maxChildSize: 0.85,
+        expand: false,
+        builder: (_, scrollController) {
+          return Container(
+            decoration: BoxDecoration(
+              color: c.surface,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: Column(
+              children: [
+                // drag handle
+                Padding(
+                  padding: const EdgeInsets.only(top: 12, bottom: 8),
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: c.border,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                // header
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppColors.accent.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.fitness_center_rounded,
+                            color: AppColors.accent, size: 20),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              routine.name,
+                              style: TextStyle(
+                                color: c.textPrimary,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.3,
+                              ),
+                            ),
+                            Text(
+                              '${routine.exercises.length} exercises',
+                              style: TextStyle(
+                                  color: c.textTertiary, fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(color: c.border, height: 1),
+                // exercise list
+                Expanded(
+                  child: routine.exercises.isEmpty
+                      ? Center(
+                          child: Text('No exercises in this routine',
+                              style: TextStyle(color: c.textDim)),
+                        )
+                      : ListView.builder(
+                          controller: scrollController,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          itemCount: routine.exercises.length,
+                          itemBuilder: (_, i) {
+                            final ex = routine.exercises[i];
+                            return ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 2),
+                              leading: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: c.chipBg,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${i + 1}',
+                                    style: TextStyle(
+                                      color: c.textSecondary,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                ex.name ?? '',
+                                style: TextStyle(
+                                  color: c.textPrimary,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              trailing: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color:
+                                      AppColors.accent.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  '${ex.sets ?? 0} × ${ex.reps ?? 0}',
+                                  style: const TextStyle(
+                                    color: AppColors.accent,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+                // start button
+                SafeArea(
+                  top: false,
+                  child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: onStart,
+                      icon: const Icon(Icons.play_arrow_rounded, size: 18),
+                      label: const Text(
+                        'Start Workout',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, fontSize: 14),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accentGreen,
+                        foregroundColor: const Color(0xFF0F0F1A),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        elevation: 0,
+                      ),
+                    ),
+                  ),
+                ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -302,6 +486,7 @@ class _QuickActionCard extends StatelessWidget {
 
 class _RoutineCard extends StatelessWidget {
   final Routine routine;
+  final VoidCallback onTap;
   final VoidCallback onStart;
   final VoidCallback onDuplicate;
   final VoidCallback onDelete;
@@ -309,6 +494,7 @@ class _RoutineCard extends StatelessWidget {
 
   const _RoutineCard({
     required this.routine,
+    required this.onTap,
     required this.onStart,
     required this.onDuplicate,
     required this.onDelete,
@@ -318,7 +504,9 @@ class _RoutineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = AppColors.of(context);
-    return Container(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
       decoration: BoxDecoration(
         color: c.surface,
         borderRadius: BorderRadius.circular(20),
@@ -447,7 +635,7 @@ class _RoutineCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      '${ex.name} ${ex.sets}×${ex.reps}',
+                      '${ex.name ?? ''} ${ex.sets ?? 0}×${ex.reps ?? 0}',
                       style: TextStyle(
                         color: c.textTertiary,
                         fontSize: 11.5,
@@ -485,6 +673,7 @@ class _RoutineCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

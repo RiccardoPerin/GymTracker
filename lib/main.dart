@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'models/app_colors.dart';
+import 'models/isar_models.dart';
 import 'providers/workout_provider.dart';
 import 'navigation_shell.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final provider = WorkoutProvider();
+  final dir = await getApplicationDocumentsDirectory();
+  final isar = await Isar.open(
+    [RoutineSchema, CompletedWorkoutSchema, CustomExerciseSchema],
+    directory: dir.path,
+  );
+  final provider = WorkoutProvider(isar);
   await provider.init();
   runApp(
     ChangeNotifierProvider.value(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../models/models.dart';
+import '../models/isar_models.dart';
 import '../providers/workout_provider.dart';
 import '../models/app_colors.dart';
 import '../widgets/exercise_picker_sheet.dart';
@@ -24,7 +24,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     super.initState();
     _routineNameController = TextEditingController(text: widget.routine.name);
     _exercises = widget.routine.exercises
-        .map((e) => _ExerciseEntry(id: e.id, name: e.name, sets: e.sets, reps: e.reps))
+        .map((e) => _ExerciseEntry(name: e.name ?? '', sets: e.sets ?? 3, reps: e.reps ?? 10))
         .toList();
   }
 
@@ -79,7 +79,10 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       if (eName.isEmpty) continue;
       final sets = (int.tryParse(entry.setsController.text) ?? 3).clamp(1, 20);
       final reps = (int.tryParse(entry.repsController.text) ?? 10).clamp(1, 100);
-      exercises.add(RoutineExercise(id: entry.id, name: eName, sets: sets, reps: reps));
+      exercises.add(RoutineExercise()
+        ..name = eName
+        ..sets = sets
+        ..reps = reps);
     }
 
     context.read<WorkoutProvider>().updateRoutine(

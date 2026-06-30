@@ -9,18 +9,23 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  supabase_flutter: ^2.15.0
+  supabase_flutter:
   google_fonts:
-  provider: ^6.1.2
-  table_calendar: ^3.1.2
-  shared_preferences: ^2.3.0
-  liquid_glass_bar: ^0.1.1
+  provider: 
+  table_calendar:
+  shared_preferences:
+  liquid_glass_bar: 
+  isar: ^3.1.0
+  isar_flutter_libs: ^3.1.0  
+  path_provider: ^2.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
+  flutter_lints:
   flutter_launcher_icons:
+  build_runner: any
+  isar_generator: ^3.1.0
 
 flutter:
   uses-material-design: true

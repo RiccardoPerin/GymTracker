@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../models/models.dart';
+import '../models/isar_models.dart';
 import '../providers/workout_provider.dart';
 import '../models/app_colors.dart';
 
@@ -548,7 +548,7 @@ class _ExerciseDetail extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            exercise.name,
+            exercise.name ?? '',
             style: TextStyle(
               color: c.textPrimary,
               fontWeight: FontWeight.w700,
@@ -607,8 +607,9 @@ class _ExerciseDetail extends StatelessWidget {
             final weightStr = s.weight != null
                 ? '${s.weight!.toStringAsFixed(s.weight! % 1 == 0 ? 0 : 1)} kg'
                 : '—';
+            final completed = s.completed ?? false;
             return Opacity(
-              opacity: s.completed ? 1.0 : 0.4,
+              opacity: completed ? 1.0 : 0.4,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 5),
                 child: Row(
@@ -640,7 +641,7 @@ class _ExerciseDetail extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        '${s.reps}',
+                        '${s.reps ?? 0}',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: c.textPrimary,
@@ -654,15 +655,15 @@ class _ExerciseDetail extends StatelessWidget {
                       width: 26,
                       height: 26,
                       decoration: BoxDecoration(
-                        color: s.completed
+                        color: completed
                             ? AppColors.accentGreen.withValues(alpha: 0.18)
                             : c.chipBg,
                         borderRadius: BorderRadius.circular(7),
                       ),
                       child: Icon(
-                        s.completed ? Icons.check_rounded : Icons.close_rounded,
+                        completed ? Icons.check_rounded : Icons.close_rounded,
                         size: 14,
-                        color: s.completed ? AppColors.accentGreen : c.dragHandle,
+                        color: completed ? AppColors.accentGreen : c.dragHandle,
                       ),
                     ),
                   ],

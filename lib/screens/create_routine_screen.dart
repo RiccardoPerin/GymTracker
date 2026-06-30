@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../models/models.dart';
+import '../models/isar_models.dart';
 import '../providers/workout_provider.dart';
 import '../models/app_colors.dart';
 import '../widgets/exercise_picker_sheet.dart';
@@ -63,20 +63,16 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
       if (eName.isEmpty) continue;
       final sets = (int.tryParse(entry.setsController.text) ?? 3).clamp(1, 20);
       final reps = (int.tryParse(entry.repsController.text) ?? 10).clamp(1, 100);
-      exercises.add(RoutineExercise(
-        id: DateTime.now().microsecondsSinceEpoch.toString(),
-        name: eName,
-        sets: sets,
-        reps: reps,
-      ));
+      exercises.add(RoutineExercise()
+        ..name = eName
+        ..sets = sets
+        ..reps = reps);
     }
 
-    context.read<WorkoutProvider>().addRoutine(Routine(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      name: name,
-      createdAt: DateTime.now(),
-      exercises: exercises,
-    ));
+    final routine = Routine()
+      ..name = name
+      ..exercises = exercises;
+    context.read<WorkoutProvider>().addRoutine(routine);
 
     Navigator.pop(context);
   }

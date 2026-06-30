@@ -1,50 +1,29 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:isar/isar.dart';
+import '../models/isar_models.dart';
 import '../models/models.dart';
 
 class WorkoutProvider extends ChangeNotifier {
+  final Isar _isar;
   final List<Routine> _routines = [];
   final List<CompletedWorkout> _history = [];
+  final List<CustomExercise> _customExercises = [];
   WorkoutSession? _activeSession;
+
+  WorkoutProvider(this._isar);
 
   // ── Persistence ───────────────────────────────────────────────────────────────
 
   Future<void> init() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    final routinesStr = prefs.getString('routines');
-    if (routinesStr != null) {
-      final decoded = jsonDecode(routinesStr) as List;
-      _routines.addAll(
-        decoded.map((e) => Routine.fromJson(e as Map<String, dynamic>)),
-      );
-    }
-
-    final historyStr = prefs.getString('history');
-    if (historyStr != null) {
-      final decoded = jsonDecode(historyStr) as List;
-      _history.addAll(
-        decoded.map((e) => CompletedWorkout.fromJson(e as Map<String, dynamic>)),
-      );
-    }
-  }
-
-  Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      'routines',
-      jsonEncode(_routines.map((r) => r.toJson()).toList()),
-    );
-    await prefs.setString(
-      'history',
-      jsonEncode(_history.map((h) => h.toJson()).toList()),
-    );
+    _routines.addAll(await _isar.routines.where().findAll());
+    _history.addAll(await _isar.completedWorkouts.where().findAll());
+    _customExercises.addAll(await _isar.customExercises.where().findAll());
   }
 
   // ── Getters ───────────────────────────────────────────────────────────────────
 
   List<Routine> get routines => List.unmodifiable(_routines);
+  List<CustomExercise> get customExercises => List.unmodifiable(_customExercises);
   WorkoutSession? get activeSession => _activeSession;
   Duration get elapsed {
     if (_activeSession == null) return Duration.zero;
@@ -57,9 +36,9 @@ class WorkoutProvider extends ChangeNotifier {
     return sorted;
   }
 
-  void deleteWorkout(String id) {
+  void deleteWorkout(int id) {
     _history.removeWhere((w) => w.id == id);
-    _save();
+    _isar.writeTxn(() => _isar.completedWorkouts.delete(id));
     notifyListeners();
   }
 
@@ -70,35 +49,59 @@ class WorkoutProvider extends ChangeNotifier {
           w.date.day == day.day)
       .toList();
 
+  // ── Custom exercises ──────────────────────────────────────────────────────────
+
+  void addCustomExercise(String name, String group) {
+    final ex = CustomExercise()
+      ..name = name
+      ..group = group;
+    _isar.writeTxn(() => _isar.customExercises.put(ex));
+    _customExercises.add(ex);
+    notifyListeners();
+  }
+
+  void deleteCustomExercise(int id) {
+    _customExercises.removeWhere((e) => e.id == id);
+    _isar.writeTxn(() => _isar.customExercises.delete(id));
+    notifyListeners();
+  }
+
   // ── Routines ──────────────────────────────────────────────────────────────────
 
   void addRoutine(Routine routine) {
+    _isar.writeTxn(() => _isar.routines.put(routine));
     _routines.add(routine);
-    _save();
     notifyListeners();
   }
 
-  void deleteRoutine(String id) {
+  void deleteRoutine(int id) {
     _routines.removeWhere((r) => r.id == id);
-    _save();
+    _isar.writeTxn(() => _isar.routines.delete(id));
     notifyListeners();
   }
 
-  void duplicateRoutine(String id) {
+  void duplicateRoutine(int id) {
     final original = _routines.firstWhere((r) => r.id == id);
-    _routines.add(original.copyWith(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      name: '${original.name} (copy)',
-    ));
-    _save();
+    final copy = Routine()
+      ..name = '${original.name} (copy)'
+      ..exercises = original.exercises
+          .map((e) => RoutineExercise()
+            ..name = e.name
+            ..sets = e.sets
+            ..reps = e.reps)
+          .toList();
+    _isar.writeTxn(() => _isar.routines.put(copy));
+    _routines.add(copy);
     notifyListeners();
   }
 
-  void updateRoutine(String id, {required String name, required List<RoutineExercise> exercises}) {
+  void updateRoutine(int id, {required String name, required List<RoutineExercise> exercises}) {
     final index = _routines.indexWhere((r) => r.id == id);
     if (index == -1) return;
-    _routines[index] = _routines[index].copyWith(name: name, exercises: exercises);
-    _save();
+    _routines[index]
+      ..name = name
+      ..exercises = exercises;
+    _isar.writeTxn(() => _isar.routines.put(_routines[index]));
     notifyListeners();
   }
 
@@ -106,13 +109,13 @@ class WorkoutProvider extends ChangeNotifier {
 
   void startRoutine(Routine routine) {
     _activeSession = WorkoutSession(
-      routineId: routine.id,
+      routineId: routine.id.toString(),
       name: routine.name,
       startedAt: DateTime.now(),
       exercises: routine.exercises
           .map((e) => ActiveExercise(
-                name: e.name,
-                sets: List.generate(e.sets, (_) => ActiveSet(reps: e.reps)),
+                name: e.name ?? '',
+                sets: List.generate(e.sets ?? 0, (_) => ActiveSet(reps: e.reps ?? 10)),
               ))
           .toList(),
     );
@@ -174,25 +177,22 @@ class WorkoutProvider extends ChangeNotifier {
   void finishWorkout() {
     if (_activeSession != null) {
       final session = _activeSession!;
-      _history.add(CompletedWorkout(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: session.name,
-        date: session.startedAt,
-        duration: DateTime.now().difference(session.startedAt),
-        exercises: session.exercises
-            .map((e) => CompletedExercise(
-                  name: e.name,
-                  sets: e.sets
-                      .map((s) => CompletedSet(
-                            reps: s.reps,
-                            weight: s.weight,
-                            completed: s.completed,
-                          ))
-                      .toList(),
-                ))
-            .toList(),
-      ));
-      _save();
+      final workout = CompletedWorkout()
+        ..name = session.name
+        ..date = session.startedAt
+        ..durationSeconds = DateTime.now().difference(session.startedAt).inSeconds
+        ..exercises = session.exercises
+            .map((e) => CompletedExercise()
+              ..name = e.name
+              ..sets = e.sets
+                  .map((s) => CompletedSet()
+                    ..reps = s.reps
+                    ..weight = s.weight
+                    ..completed = s.completed)
+                  .toList())
+            .toList();
+      _isar.writeTxn(() => _isar.completedWorkouts.put(workout));
+      _history.add(workout);
     }
     _activeSession = null;
     notifyListeners();
