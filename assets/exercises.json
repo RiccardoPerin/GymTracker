@@ -1,0 +1,302 @@
+[
+    {
+        "id": 1,
+        "name": "Bench Press (Barbell)",
+        "group": "Chest"
+    },
+    {
+        "id": 2,
+        "name": "Bench Press (Dumbbells)",
+        "group": "Chest"
+    },
+    {
+        "id": 3,
+        "name": "Incline Bench Press (Barbell)",
+        "group": "Chest"
+    },
+    {
+        "id": 4,
+        "name": "Incline Bench Press (Dumbbells)",
+        "group": "Chest"
+    },
+    {
+        "id": 5,
+        "name": "Chest Press",
+        "group": "Chest"
+    },
+    {
+        "id": 6,
+        "name": "Incline Chest Press",
+        "group": "Chest"
+    },
+    {
+        "id": 7,
+        "name": "Cable Crossovers",
+        "group": "Chest"
+    },
+    {
+        "id": 8,
+        "name": "Peck deck",
+        "group": "Chest"
+    },
+    {
+        "id": 9,
+        "name": "Dumbbell Flyes",
+        "group": "Chest"
+    },
+    {
+        "id": 10,
+        "name": "Dips",
+        "group": "Chest"
+    },
+    {
+        "id": 11,
+        "name": "Push-ups",
+        "group": "Chest"
+    },
+
+    {
+        "id": 12,
+        "name": "Pull-ups",
+        "group": "Back"
+    },
+    {
+        "id": 13,
+        "name": "Chin-ups",
+        "group": "Back"
+    },
+    {
+        "id": 14,
+        "name": "Neutral Pull-ups",
+        "group": "Back"
+    },
+    {
+        "id": 15,
+        "name": "Lat Machine",
+        "group": "Back"
+    },
+    {
+        "id": 16,
+        "name": "Pull Down",
+        "group": "Back"
+    },
+    {
+        "id": 17,
+        "name": "Barbell Row",
+        "group": "Back"
+    },
+    {
+        "id": 18,
+        "name": "Dumbbell Row",
+        "group": "Back"
+    },
+    {
+        "id": 19,
+        "name": "Seated Pulley",
+        "group": "Back"
+    },
+    {
+        "id": 20,
+        "name": "T-bar",
+        "group": "Back"
+    },
+
+    {
+        "id": 21,
+        "name": "Barbell Squat",
+        "group": "Legs"
+    },
+    {
+        "id": 22,
+        "name": "Hack Squat",
+        "group": "Legs"
+    },
+    {
+        "id": 23,
+        "name": "Multipower Squat",
+        "group": "Legs"
+    },
+    {
+        "id": 24,
+        "name": "Pendulus Squat",
+        "group": "Legs"
+    },
+    {
+        "id": 25,
+        "name": "Leg Press",
+        "group": "Legs"
+    },
+    {
+        "id": 26,
+        "name": "Leg Extension",
+        "group": "Legs"
+    },
+    {
+        "id": 27,
+        "name": "Leg Curl",
+        "group": "Legs"
+    },
+    {
+        "id": 28,
+        "name": "RDL",
+        "group": "Legs"
+    },
+    {
+        "id": 29,
+        "name": "Dumbbell Lunges",
+        "group": "Legs"
+    },
+    {
+        "id": 30,
+        "name": "Bulgarian Split Squat",
+        "group": "Legs"
+    },
+    {
+        "id": 31,
+        "name": "Hip Thrust",
+        "group": "Legs"
+    },
+    {
+        "id": 32,
+        "name": "Calf Raises",
+        "group": "Legs"
+    },
+    {
+        "id": 33,
+        "name": "Deadlift",
+        "group": "Legs"
+    },
+
+    {
+        "id": 34,
+        "name": "Shoulder Press (Dumbbells)",
+        "group": "Shoulders"
+    },
+    {
+        "id": 35,
+        "name": "Shoulder Press (Multipower)",
+        "group": "Shoulders"
+    },
+    {
+        "id": 36,
+        "name": "Military Press",
+        "group": "Shoulders"
+    },
+    {
+        "id": 37,
+        "name": "Lateral Raises",
+        "group": "Shoulders"
+    },
+    {
+        "id": 38,
+        "name": "Cable Lateral Raises",
+        "group": "Shoulders"
+    },
+    {
+        "id": 39,
+        "name": "Front Raises",
+        "group": "Shoulders"
+    },
+    {
+        "id": 40,
+        "name": "Rear Delt Fly",
+        "group": "Shoulders"
+    },
+    {
+        "id": 41,
+        "name": "Rear Delt Cable",
+        "group": "Shoulders"
+    },
+    {
+        "id": 42,
+        "name": "Shrugs",
+        "group": "Traps"
+    },
+
+    {
+        "id": 43,
+        "name": "Barbell Curl",
+        "group": "Arms"
+    },
+    {
+        "id": 44,
+        "name": "Dumbell Curl",
+        "group": "Arms"
+    },
+    {
+        "id": 45,
+        "name": "Cable Curl",
+        "group": "Arms"
+    },
+    {
+        "id": 46,
+        "name": "Hammer Curl (Dumbbells)",
+        "group": "Arms"
+    },
+    {
+        "id": 47,
+        "name": "Hammer Curl (Cable)",
+        "group": "Arms"
+    },
+    {
+        "id": 48,
+        "name": "Preacher Curl",
+        "group": "Arms"
+    },
+    {
+        "id": 49,
+        "name": "Inclined Bench Bicep Curl",
+        "group": "Arms"
+    },
+    {
+        "id": 50,
+        "name": "Spider Curl",
+        "group": "Arms"
+    },
+    {
+        "id": 51,
+        "name": "Tricep Pushdown (Cable)",
+        "group": "Arms"
+    },
+    {
+        "id": 52,
+        "name": "Tricep Rope Pushdown (Cable)",
+        "group": "Arms"
+    },
+    {
+        "id": 53,
+        "name": "French Press",
+        "group": "Arms"
+    },
+    {
+        "id": 54,
+        "name": "Overhead Tricep Extension",
+        "group": "Arms"
+    },
+    {
+        "id": 55,
+        "name": "Overhead Tricep Extension (Cable)",
+        "group": "Arms"
+    },
+
+    {
+        "id": 56,
+        "name": "Crunch",
+        "group": "Abs"
+    },
+    {
+        "id": 57,
+        "name": "Leg Raises",
+        "group": "Abs"
+    },
+    {
+        "id": 58,
+        "name": "Russian Twist",
+        "group": "Abs"
+    },
+    {
+        "id": 59,
+        "name": "Plank",
+        "group": "Abs"
+    }
+]

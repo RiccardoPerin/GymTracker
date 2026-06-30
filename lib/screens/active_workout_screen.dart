@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/models.dart';
 import '../providers/workout_provider.dart';
 import '../models/app_colors.dart';
+import '../widgets/exercise_picker_sheet.dart';
 
 class ActiveWorkoutScreen extends StatefulWidget {
   const ActiveWorkoutScreen({super.key});
@@ -54,129 +55,82 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
             'Finish Workout?',
             style: TextStyle(color: c.textPrimary, fontWeight: FontWeight.w800),
           ),
-          content: Text(
-            'Workout time: ${_formatDuration(_elapsed)}',
-            style: TextStyle(color: c.textSecondary),
+          content: StreamBuilder(
+            stream: Stream.periodic(const Duration(seconds: 1)),
+            builder: (context, snapshot) {
+              // Leggi l'elapsed aggiornato dal provider ad ogni "tick" del secondo
+              final currentElapsed = context.read<WorkoutProvider>().elapsed;
+              
+              return Text(
+                'Workout time: ${_formatDuration(currentElapsed)}',
+                style: TextStyle(color: c.textSecondary),
+              );
+            },
           ),
           actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              onPressed: () {
-                context.read<WorkoutProvider>().discardWorkout();
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              child: const Text('Discard', style: TextStyle(fontWeight: FontWeight.w700)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.accentGreen,
-                foregroundColor: AppColors.of(context).background,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              onPressed: () {
-                context.read<WorkoutProvider>().finishWorkout();
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              child: const Text('Finish', style: TextStyle(fontWeight: FontWeight.w700)),
-            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () {
+                          context.read<WorkoutProvider>().discardWorkout();
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Delete', style: TextStyle(fontWeight: FontWeight.w700)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accentGreen,
+                          foregroundColor: AppColors.of(context).background,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () {
+                          context.read<WorkoutProvider>().finishWorkout();
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Finish', style: TextStyle(fontWeight: FontWeight.w700)),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.grey, width: 1.5),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () => Navigator.pop(context), 
+                    child: const Text('Go back', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey))
+                  ),
+                )
+              ],
+            )
           ],
         );
       },
     );
   }
 
-  void _showAddExerciseSheet() {
-    final nameCtrl = TextEditingController();
-    final setsCtrl = TextEditingController(text: '3');
-    final repsCtrl = TextEditingController(text: '10');
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        final c = AppColors.of(ctx);
-        return Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
-            decoration: BoxDecoration(
-              color: c.surface,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: c.dragHandle,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Add Exercise',
-                  style: TextStyle(
-                    color: c.textPrimary,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _DarkTextField(controller: nameCtrl, hint: 'Exercise name', autofocus: true),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _StepperField(label: 'Sets', controller: setsCtrl, min: 1, max: 20),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _StepperField(label: 'Reps', controller: repsCtrl, min: 1, max: 100),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accent,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    ),
-                    onPressed: () {
-                      final name = nameCtrl.text.trim();
-                      if (name.isEmpty) return;
-                      final sets = (int.tryParse(setsCtrl.text) ?? 3).clamp(1, 20);
-                      final reps = (int.tryParse(repsCtrl.text) ?? 10).clamp(1, 100);
-                      context.read<WorkoutProvider>().addExerciseToSession(name, sets, reps);
-                      Navigator.pop(ctx);
-                    },
-                    child: const Text(
-                      'Add',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+  void _showAddExerciseSheet() async {
+    final name = await showExercisePicker(context);
+    if (name == null || !mounted) return;
+    context.read<WorkoutProvider>().addExerciseToSession(name, 3, 10);
   }
 
   @override
@@ -631,130 +585,3 @@ class _SetActionButton extends StatelessWidget {
   }
 }
 
-// ─── Dark text field ──────────────────────────────────────────────────────────
-
-class _DarkTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final bool autofocus;
-
-  const _DarkTextField({
-    required this.controller,
-    required this.hint,
-    this.autofocus = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final c = AppColors.of(context);
-    return TextField(
-      controller: controller,
-      autofocus: autofocus,
-      style: TextStyle(color: c.textPrimary),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: TextStyle(color: c.textHint),
-        filled: true,
-        fillColor: c.inputBg,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      ),
-    );
-  }
-}
-
-// ─── Stepper field ────────────────────────────────────────────────────────────
-
-class _StepperField extends StatelessWidget {
-  final String label;
-  final TextEditingController controller;
-  final int min;
-  final int max;
-
-  const _StepperField({
-    required this.label,
-    required this.controller,
-    required this.min,
-    required this.max,
-  });
-
-  void _increment() {
-    final v = int.tryParse(controller.text) ?? min;
-    if (v < max) controller.text = '${v + 1}';
-  }
-
-  void _decrement() {
-    final v = int.tryParse(controller.text) ?? min;
-    if (v > min) controller.text = '${v - 1}';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final c = AppColors.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: c.textTertiary,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          decoration: BoxDecoration(
-            color: c.inputBg,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              _StepButton(icon: Icons.remove, onTap: _decrement),
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  style: TextStyle(
-                    color: c.textPrimary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                  ),
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 12),
-                  ),
-                ),
-              ),
-              _StepButton(icon: Icons.add, onTap: _increment),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _StepButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _StepButton({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final c = AppColors.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        child: Icon(icon, size: 18, color: c.iconMid),
-      ),
-    );
-  }
-}

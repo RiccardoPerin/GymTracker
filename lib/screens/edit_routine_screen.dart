@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/models.dart';
 import '../providers/workout_provider.dart';
 import '../models/app_colors.dart';
+import '../widgets/exercise_picker_sheet.dart';
 
 class EditRoutineScreen extends StatefulWidget {
   final Routine routine;
@@ -36,8 +37,10 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     super.dispose();
   }
 
-  void _addExercise() {
-    setState(() => _exercises.add(_ExerciseEntry()));
+  void _addExercise() async {
+    final name = await showExercisePicker(context);
+    if (name == null || !mounted) return;
+    setState(() => _exercises.add(_ExerciseEntry(name: name)));
   }
 
   void _removeExercise(int index) {

@@ -46,6 +46,10 @@ class WorkoutProvider extends ChangeNotifier {
 
   List<Routine> get routines => List.unmodifiable(_routines);
   WorkoutSession? get activeSession => _activeSession;
+  Duration get elapsed {
+    if (_activeSession == null) return Duration.zero;
+    return DateTime.now().difference(_activeSession!.startedAt);
+  }
 
   List<CompletedWorkout> get history {
     final sorted = List.of(_history);
