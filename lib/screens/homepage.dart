@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
             expandedHeight: 50,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(left: 24, bottom: 16),
+              titlePadding: const EdgeInsets.only(left: 24, bottom: 10),
               title: Text(
                 'GymTracker',
                 style: TextStyle(
