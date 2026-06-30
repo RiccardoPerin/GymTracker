@@ -292,6 +292,12 @@ class _CreateExerciseDialogState extends State<_CreateExerciseDialog> {
   String? _selectedGroup;
 
   @override
+  void initState() {
+    super.initState();
+    _nameCtrl.addListener(() => setState(() {}));
+  }
+
+  @override
   void dispose() {
     _nameCtrl.dispose();
     super.dispose();
@@ -306,6 +312,7 @@ class _CreateExerciseDialogState extends State<_CreateExerciseDialog> {
   @override
   Widget build(BuildContext context) {
     final c = AppColors.of(context);
+    final canSubmit = _nameCtrl.text.trim().isNotEmpty && _selectedGroup != null;
     return AlertDialog(
       backgroundColor: c.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -313,52 +320,77 @@ class _CreateExerciseDialogState extends State<_CreateExerciseDialog> {
         'New Exercise',
         style: TextStyle(color: c.textPrimary, fontWeight: FontWeight.w800),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: _nameCtrl,
-            autofocus: true,
-            style: TextStyle(color: c.textPrimary),
-            textCapitalization: TextCapitalization.words,
-            decoration: InputDecoration(
-              hintText: 'Exercise name',
-              hintStyle: TextStyle(color: c.textHint),
-              filled: true,
-              fillColor: c.inputBg,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _nameCtrl,
+              autofocus: true,
+              style: TextStyle(color: c.textPrimary),
+              textCapitalization: TextCapitalization.words,
+              decoration: InputDecoration(
+                hintText: 'Exercise name',
+                hintStyle: TextStyle(color: c.textHint),
+                filled: true,
+                fillColor: c.inputBg,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               ),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             ),
-          ),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<String>(
-            initialValue: _selectedGroup,
-            dropdownColor: c.surface,
-            style: TextStyle(color: c.textPrimary),
-            hint: Text('Muscle group', style: TextStyle(color: c.textHint)),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: c.inputBg,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+            const SizedBox(height: 16),
+            Text(
+              'Muscle Group',
+              style: TextStyle(
+                color: c.textSecondary,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.3,
               ),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             ),
-            items: widget.groups
-                .map((g) => DropdownMenuItem(
-                      value: g,
-                      child: Text(g),
-                    ))
-                .toList(),
-            onChanged: (v) => setState(() => _selectedGroup = v),
-          ),
-        ],
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: widget.groups.map((g) {
+                final selected = _selectedGroup == g;
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedGroup = g),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 150),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 7),
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? AppColors.accent
+                          : c.chipBg,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: selected
+                            ? AppColors.accent
+                            : c.border,
+                        width: selected ? 1.5 : 1,
+                      ),
+                    ),
+                    child: Text(
+                      g,
+                      style: TextStyle(
+                        color: selected ? Colors.white : c.textSecondary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(
@@ -366,15 +398,17 @@ class _CreateExerciseDialogState extends State<_CreateExerciseDialog> {
           child: Text('Cancel', style: TextStyle(color: c.textDim)),
         ),
         ElevatedButton(
-          onPressed: _nameCtrl.text.trim().isNotEmpty && _selectedGroup != null
-              ? _submit
-              : null,
+          onPressed: canSubmit ? _submit : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.accent,
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            disabledBackgroundColor: AppColors.accent.withValues(alpha: 0.35),
+            disabledForegroundColor: Colors.white54,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10)),
           ),
-          child: const Text('Create', style: TextStyle(fontWeight: FontWeight.w700)),
+          child: const Text('Create',
+              style: TextStyle(fontWeight: FontWeight.w700)),
         ),
       ],
     );

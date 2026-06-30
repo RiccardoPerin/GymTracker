@@ -34,5 +34,5 @@ flutter:
 
 flutter_icons:
   ios: true
-  image_path: "assets/logo.png"
+  image_path: "assets/report.png"
   remove_alpha_ios: true
