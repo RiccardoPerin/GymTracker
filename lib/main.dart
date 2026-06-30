@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'app_colors.dart';
+import 'models/app_colors.dart';
 import 'providers/workout_provider.dart';
 import 'navigation_shell.dart';
 

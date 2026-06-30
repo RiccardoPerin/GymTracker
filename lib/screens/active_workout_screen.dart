@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../models/models.dart';
 import '../providers/workout_provider.dart';
-import '../app_colors.dart';
+import '../models/app_colors.dart';
 
 class ActiveWorkoutScreen extends StatefulWidget {
   const ActiveWorkoutScreen({super.key});

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../models/models.dart';
 import '../providers/workout_provider.dart';
-import '../app_colors.dart';
+import '../models/app_colors.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -48,6 +48,31 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   // ── Detail bottom sheet ───────────────────────────────────────────────────────
+
+  Future<void> _showDeleteConfirmation(
+    BuildContext context,
+    WorkoutProvider provider,
+    CompletedWorkout workout,
+  ) async {
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Are you sure?"),
+        content: const Text("This will permanently delete this workout."),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Delete", style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+    if (confirm == true) {
+      provider.deleteWorkout(workout.id);
+      if (context.mounted) Navigator.pop(context);
+    }
+  }
 
   void _showDetail(BuildContext context, CompletedWorkout workout) {
     showModalBottomSheet(
@@ -127,8 +152,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           )),
                       ElevatedButton.icon(
                         onPressed: () {
-                          // ------- TO DO --------
-                        }, 
+                          final provider = context.read<WorkoutProvider>();
+                          _showDeleteConfirmation(context, provider, workout);
+                        },
                         icon: const Icon(Icons.delete_rounded, size: 18, color: Colors.white,),
                         label: const Text(
                           'Delete Workout',

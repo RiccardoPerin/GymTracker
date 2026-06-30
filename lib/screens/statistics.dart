@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../app_colors.dart';
+import '../models/app_colors.dart';
 
 class StatisticScreen extends StatefulWidget {
   const StatisticScreen({super.key});

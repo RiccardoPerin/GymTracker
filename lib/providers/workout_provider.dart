@@ -53,6 +53,12 @@ class WorkoutProvider extends ChangeNotifier {
     return sorted;
   }
 
+  void deleteWorkout(String id) {
+    _history.removeWhere((w) => w.id == id);
+    _save();
+    notifyListeners();
+  }
+
   List<CompletedWorkout> workoutsOnDay(DateTime day) => _history
       .where((w) =>
           w.date.year == day.year &&

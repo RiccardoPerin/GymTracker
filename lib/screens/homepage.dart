@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/models.dart';
 import '../providers/workout_provider.dart';
-import '../app_colors.dart';
+import '../models/app_colors.dart';
 import 'create_routine_screen.dart';
 import 'active_workout_screen.dart';
 import 'edit_routine_screen.dart';
@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
             expandedHeight: 50,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(left: 24, bottom: 16),
+              titlePadding: const EdgeInsets.only(left: 24, bottom: 16, top: 20),
               title: Text(
                 'GymTracker',
                 style: TextStyle(

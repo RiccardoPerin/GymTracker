@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:liquid_glass_bar/liquid_glass_bar.dart';
-import 'app_colors.dart';
+import 'models/app_colors.dart';
 import 'providers/workout_provider.dart';
 import 'screens/homepage.dart';
 import 'screens/history_screen.dart';
