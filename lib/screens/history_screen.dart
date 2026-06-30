@@ -68,17 +68,57 @@ class _HistoryScreenState extends State<HistoryScreen> {
   ) async {
     final bool? confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Are you sure?"),
-        content: const Text("This will permanently delete this workout."),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text("Delete", style: TextStyle(color: Colors.redAccent)),
+      builder: (context) {
+        final c = AppColors.of(context);
+        return AlertDialog(
+          backgroundColor: c.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text(
+            "Are you sure?",
+            style: TextStyle(color: c.textPrimary, fontWeight: FontWeight.w800)
           ),
-        ],
-      ),
+          content: Text(
+            "This will permanently delete this workout.",
+            style: TextStyle(color: c.textSecondary, fontWeight: FontWeight.w500),
+          ),
+          actions: [
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.grey, width: 1.5),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () => Navigator.pop(context, false), 
+                    child: Text(
+                      "Go back",
+                      style: TextStyle(color: c.textSecondary, fontWeight: FontWeight.w700),
+                    )
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () => Navigator.pop(context, true),
+                    child: const Text(
+                      "Delete", 
+                      style: TextStyle(fontWeight: FontWeight.w700)
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        );
+      }
     );
     if (confirm == true) {
       provider.deleteWorkout(workout.id);
