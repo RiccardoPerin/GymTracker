@@ -23,6 +23,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
     _selectedDay = DateTime.now();
   }
 
+  bool get _isNotCurrentMonth {
+    final now = DateTime.now();
+    return _focusedDay.month != now.month || _focusedDay.year != now.year;
+  }
+
+  void _goToToday() {
+    setState(() {
+      _focusedDay = DateTime.now();
+      _selectedDay = DateTime.now();
+    });
+  }
+
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
   String _dateHeader(DateTime date) {
@@ -197,6 +209,19 @@ class _HistoryScreenState extends State<HistoryScreen> {
           'History',
           style: TextStyle(color: c.textPrimary, fontWeight: FontWeight.w800),
         ),
+        actions: [
+          if (_isNotCurrentMonth)
+            Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: TextButton(
+                onPressed: _goToToday,
+                child: Text(
+                  'Today', 
+                  style: TextStyle(color: AppColors.accentGreen, fontWeight: FontWeight.w700, fontSize: 15)
+                ),
+              ),
+            ),
+        ],
       ),
       body: Column(
         children: [
@@ -205,8 +230,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
             color: c.calendarBg,
             padding: const EdgeInsets.only(bottom: 8),
             child: TableCalendar<CompletedWorkout>(
-              firstDay: DateTime.utc(2024, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
+              firstDay: DateTime.utc(2026, 1, 1),
+              lastDay: DateTime.utc(DateTime.now().year + 1, 12, 31),
+              startingDayOfWeek: StartingDayOfWeek.monday,
               focusedDay: _focusedDay,
               selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
               eventLoader: provider.workoutsOnDay,
